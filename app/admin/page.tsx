@@ -38,8 +38,8 @@ const mockLogs: ActivityLog[] = [
 export default function AdminDashboard() {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
-  const [users, _setUsers] = useState<UserRow[]>(mockUsers);
-  const [logs, _setLogs] = useState<ActivityLog[]>(mockLogs);
+  const [users] = useState<UserRow[]>(mockUsers);
+  const [logs] = useState<ActivityLog[]>(mockLogs);
   const [newClassTitle, setNewClassTitle] = useState('');
   const [newClassCategory, setNewClassCategory] = useState('Mindset');
 
