@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
-import { Search, Users, DollarSign, Activity, Shield, Plus } from 'lucide-react';
+import { Search, Users, DollarSign, Activity, Shield, Plus, TrendingUp, Flame } from 'lucide-react';
 
 interface UserRow {
   id: number;
@@ -38,8 +38,8 @@ const mockLogs: ActivityLog[] = [
 export default function AdminDashboard() {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState('');
-  const [users, setUsers] = useState<UserRow[]>(mockUsers);
-  const [logs, setLogs] = useState<ActivityLog[]>(mockLogs);
+  const [users, _setUsers] = useState<UserRow[]>(mockUsers);
+  const [logs, _setLogs] = useState<ActivityLog[]>(mockLogs);
   const [newClassTitle, setNewClassTitle] = useState('');
   const [newClassCategory, setNewClassCategory] = useState('Mindset');
 
