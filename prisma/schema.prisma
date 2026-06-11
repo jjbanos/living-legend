@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  clerkId       String   @unique
+  email         String   @unique
+  name          String?
+  legendScore   Int      @default(42)
+  currentStreak Int      @default(0)
+  longestStreak Int      @default(0)
+  role          String   @default("user") // "user" | "admin"
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  journalEntries JournalEntry[]
+  progress       UserProgress[]
+  activityLogs   ActivityLog[]
+}
+
+model JournalEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String
+  isShadowWin Boolean @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MasterClass {
+  id              String   @id @default(cuid())
+  title           String
+  subtitle        String?
+  durationMinutes Int
+  category        String
+  content         String   @db.Text
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+
+  progress UserProgress[]
+}
+
+model UserProgress {
+  id            String    @id @default(cuid())
+  userId        String
+  masterClassId String
+  completedAt   DateTime?
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  masterClass   MasterClass @relation(fields: [masterClassId], references: [id], onDelete: Cascade)
+  @@unique([userId, masterClassId])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String   // e.g. "quick_win_anxiety", "journal_entry", "assessment_completed"
+  metadata  Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

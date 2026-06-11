@@ -1,0 +1,33 @@
+{
+  "name": "living-legend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.12.4",
+    "@prisma/client": "^5.22.0",
+    "lucide-react": "^0.511.0",
+    "next": "15.3.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.2",
+    "postcss": "^8",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
