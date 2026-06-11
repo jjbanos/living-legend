@@ -15,11 +15,13 @@
     "@clerk/nextjs": "^6.12.4",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@tailwindcss/postcss": "^4",
     "class-variance-authority": "^0.7.1",
     "lucide-react": "^0.511.0",
     "next": "^15.3.8",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4"
   },
   "devDependencies": {
     "@types/node": "^22",
@@ -29,7 +31,6 @@
     "eslint-config-next": "^15.3.8",
     "postcss": "^8",
     "prisma": "^5.22.0",
-    "tailwindcss": "^4",
     "typescript": "^5"
   }
 }
