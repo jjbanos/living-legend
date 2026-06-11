@@ -21,17 +21,51 @@ npx prisma db push
 npm run dev
 ```
 
-## Railway Deployment
+## Railway Deployment (Easiest way to preview the live site)
 
-1. Push to GitHub.
-2. Create new Railway project → Deploy from GitHub.
-3. Add **Postgres** plugin in Railway (it will provide `DATABASE_URL`).
-4. Add environment variables:
-   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
-   - `CLERK_SECRET_KEY`
-   - `DATABASE_URL` (auto from Postgres plugin)
-   - `ADMIN_EMAIL` (your email for /admin access)
-5. Railway will run `prisma generate` during build (see package.json).
+Since the full app is now committed (including homepage, protected dashboard with Legend Score + streak + quick wins + journal + carousel, 11-question assessment with snapshot, 10 mini master classes, Clerk auth, and full admin dashboard), here's the fastest path:
+
+1. Push the code from your machine:
+   ```powershell
+   cd "C:\Users\JuanBanos\living-legend"
+   git push
+   ```
+
+2. Go to https://railway.app
+   - New Project → Deploy from GitHub
+   - Select your repo `jjbanos/living-legend`
+
+3. In the new Railway project:
+   - Click **+ New** → **Database** → **PostgreSQL** (this automatically provides the `DATABASE_URL` variable)
+
+4. Select your Next.js service → **Variables** tab → Add these (use your real values):
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` = pk_... (from your Clerk dashboard)
+   - `CLERK_SECRET_KEY` = sk_... (from your Clerk dashboard)
+   - `ADMIN_EMAIL` = the exact email you will use to sign up and access /admin
+
+5. Railway detects Next.js and will run `prisma generate && next build` automatically (already configured in package.json).
+
+6. Once the deploy finishes (green check), click the **public URL** (e.g. `https://your-app.up.railway.app`).
+
+7. On the live site:
+   - Sign up with Clerk using the ADMIN_EMAIL account
+   - Visit `/dashboard`, `/assessment`, `/classes`
+   - Visit `/admin` to see the full owner dashboard
+
+**Notes for Railway preview:**
+- You **must** use real Clerk keys (create one at clerk.com → new app if you don't have them yet).
+- The first deploy may take 2-3 minutes.
+- All routes are protected by Clerk middleware.
+- The Postgres service is free for small usage during testing.
+
+If you want to test locally instead:
+```powershell
+cd "C:\Users\JuanBanos\living-legend"
+npm install
+# Edit .env.local with real Clerk keys (and optionally a local Postgres URL)
+npm run dev
+```
+Then open http://localhost:3000.
 
 ## Key Pages
 - `/` — Beautiful marketing homepage
