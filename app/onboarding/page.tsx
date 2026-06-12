@@ -1,11 +1,9 @@
 'use client'
 
-import { useUser } from '@clerk/nextjs'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export default function Onboarding() {
-  const { user } = useUser()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
@@ -14,13 +12,11 @@ export default function Onboarding() {
     if (!confirmed) return
     setLoading(true)
     
-    // Update Clerk user metadata (simple gate)
-    await user?.update({
-      unsafeMetadata: {
-        is_male_confirmed: true,
-        onboarding_completed: true,
-      }
-    })
+    try {
+      await fetch('/api/onboarding', { method: 'POST' })
+    } catch {
+      // Entry is not blocked if the flag fails to persist
+    }
 
     router.push('/dashboard')
   }

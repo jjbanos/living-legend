@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  clerkId       String   @unique
-  email         String   @unique
-  name          String?
-  legendScore   Int      @default(42)
-  currentStreak Int      @default(0)
-  longestStreak Int      @default(0)
-  role          String   @default("user") // "user" | "admin"
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  email               String   @unique
+  passwordHash        String
+  name                String?
+  legendScore         Int      @default(42)
+  currentStreak       Int      @default(0)
+  longestStreak       Int      @default(0)
+  role                String   @default("user") // "user" | "admin"
+  onboardingCompleted Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   journalEntries JournalEntry[]
   progress       UserProgress[]

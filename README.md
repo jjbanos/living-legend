@@ -2,11 +2,11 @@
 
 **Build the man. Become the legend.**
 
-Private, masculine self-mastery platform built with Next.js, Clerk, Prisma, and deployed on Railway.
+Private, masculine self-mastery platform built with Next.js, self-hosted Auth.js, Prisma, and deployed on Railway. No third-party auth service — everything runs on Railway.
 
 ## Tech Stack
 - Next.js 15 (App Router) + Tailwind + shadcn/ui style components
-- Clerk for authentication & protected routes
+- Auth.js (NextAuth v5) — self-hosted email/password auth, bcrypt-hashed, JWT sessions
 - Prisma + PostgreSQL (Railway)
 - Dark masculine theme with gold accents
 
@@ -15,70 +15,43 @@ Private, masculine self-mastery platform built with Next.js, Clerk, Prisma, and 
 ```bash
 npm install
 cp .env.example .env.local
-# Add your Clerk keys and DATABASE_URL
+# Set DATABASE_URL (any Postgres), AUTH_SECRET, ADMIN_EMAILS
 npx prisma generate
 npx prisma db push
 npm run dev
 ```
 
-## Railway Deployment (Easiest way to preview the live site)
-
-Since the full app is now committed (including homepage, protected dashboard with Legend Score + streak + quick wins + journal + carousel, 11-question assessment with snapshot, 10 mini master classes, Clerk auth, and full admin dashboard), here's the fastest path:
-
-1. Push the code from your machine:
-   ```powershell
-   cd "C:\Users\JuanBanos\living-legend"
-   git push
-   ```
-
-2. Go to https://railway.app
-   - New Project → Deploy from GitHub
-   - Select your repo `jjbanos/living-legend`
-
-3. In the new Railway project:
-   - Click **+ New** → **Database** → **PostgreSQL** (this automatically provides the `DATABASE_URL` variable)
-
-4. Select your Next.js service → **Variables** tab → Add these (use your real values):
-   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` = pk_... (from your Clerk dashboard)
-   - `CLERK_SECRET_KEY` = sk_... (from your Clerk dashboard)
-   - `ADMIN_EMAIL` = the exact email you will use to sign up and access /admin
-
-5. Railway detects Next.js and will run `prisma generate && next build` automatically (already configured in package.json).
-
-6. Once the deploy finishes (green check), click the **public URL** (e.g. `https://your-app.up.railway.app`).
-
-7. On the live site:
-   - Sign up with Clerk using the ADMIN_EMAIL account
-   - Visit `/dashboard`, `/assessment`, `/classes`
-   - Visit `/admin` to see the full owner dashboard
-
-**Notes for Railway preview:**
-- You **must** use real Clerk keys (create one at clerk.com → new app if you don't have them yet).
-- The first deploy may take 2-3 minutes.
-- All routes are protected by Clerk middleware.
-- The Postgres service is free for small usage during testing.
-
-If you want to test locally instead:
-```powershell
-cd "C:\Users\JuanBanos\living-legend"
-npm install
-# Edit .env.local with real Clerk keys (and optionally a local Postgres URL)
-npm run dev
-```
 Then open http://localhost:3000.
+
+## Railway Deployment
+
+The project lives at https://railway.app under **Living-Legend** with two services:
+
+- **living-legend** — the Next.js app, auto-deploys from GitHub `main`
+- **Postgres** — the database; `DATABASE_URL` is wired to the app via a reference variable
+
+Required variables on the app service:
+
+- `DATABASE_URL` = `${{Postgres.DATABASE_URL}}` (reference to the Postgres service)
+- `AUTH_SECRET` = random 32+ byte secret (e.g. `openssl rand -base64 32`)
+- `ADMIN_EMAILS` = comma-separated emails allowed into `/admin`
+
+On every deploy Railway runs `prisma generate && next build`, then `npx prisma db push --skip-generate` (pre-deploy command in `railway.json`) to sync the schema before starting.
+
+To deploy: push to `main`. Railway builds and ships automatically.
 
 ## Key Pages
 - `/` — Beautiful marketing homepage
-- `/sign-in`, `/sign-up` — Clerk auth
+- `/sign-in`, `/sign-up` — Self-hosted email/password auth
 - `/dashboard` — Daily practice (score, streak, quick wins, journal, carousel)
 - `/assessment` — 11-question step-by-step assessment + Legend Snapshot
 - `/classes` — Full library of 10 mini master classes
 - `/admin` — Owner-only command center (users, finances, activity, content mgmt, security)
 
 ## Notes
-- All sensitive routes are protected by Clerk middleware.
-- Admin access is gated by `ADMIN_EMAIL`.
-- Data persistence via Prisma (journal, classes, activity). Currently demo-enhanced with localStorage for instant feel.
+- All sensitive routes are protected by Auth.js middleware (`middleware.ts` + `auth.config.ts`).
+- Admin access is gated server-side by `ADMIN_EMAILS`.
+- Accounts live in Postgres (`User` model, bcrypt password hashes). Dashboard data is currently demo-enhanced with localStorage for instant feel.
 - No social feed. Purely private.
 
 Run `npm run db:studio` to explore the database locally.

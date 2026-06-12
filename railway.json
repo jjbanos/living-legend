@@ -3,5 +3,8 @@
   "build": {
     "builder": "RAILPACK",
     "buildCommand": "prisma generate && next build"
+  },
+  "deploy": {
+    "preDeployCommand": "npx prisma db push --skip-generate"
   }
 }

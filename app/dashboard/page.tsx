@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { UserButton, useUser } from '@clerk/nextjs';
+import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { 
   Flame, Target, BookOpen, Award, Zap, Brain, Heart, TrendingUp, 
@@ -29,7 +29,7 @@ const miniClassesPreview = [
 ];
 
 export default function DailyPracticeDashboard() {
-  const { user } = useUser();
+  const { data: session } = useSession();
   const [legendScore, setLegendScore] = useState(initialScore);
   const [streak, setStreak] = useState(initialStreak);
   const [journalEntry, setJournalEntry] = useState('');
@@ -101,7 +101,7 @@ export default function DailyPracticeDashboard() {
     saveToStorage(newScore, streak, newJournals, completedWins);
   };
 
-  const name = user?.firstName || user?.username || 'Brother';
+  const name = session?.user?.name?.split(' ')[0] || 'Brother';
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#ededed]">
@@ -119,7 +119,12 @@ export default function DailyPracticeDashboard() {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-xs text-[#666] hidden sm:block">Welcome, {name}</div>
-            <UserButton appearance={{ elements: { avatarBox: "w-8 h-8" } }} />
+            <button
+              onClick={() => signOut({ redirectTo: '/' })}
+              className="text-xs text-[#a1a1aa] hover:text-white"
+            >
+              Sign out
+            </button>
           </div>
         </div>
       </nav>
@@ -131,9 +136,14 @@ export default function DailyPracticeDashboard() {
             <div className="text-[#C5A26F] text-xs tracking-[3px] mb-1">PRIVATE DAILY PRACTICE</div>
             <h1 className="text-5xl tracking-[-2px] font-semibold">Good morning, {name}.</h1>
           </div>
-          <Link href="/sign-in">
-            <Button variant="outline" size="sm" className="border-white/20">Sign out</Button>
-          </Link>
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-white/20"
+            onClick={() => signOut({ redirectTo: '/' })}
+          >
+            Sign out
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
